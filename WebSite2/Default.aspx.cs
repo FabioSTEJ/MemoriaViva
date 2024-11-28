@@ -59,6 +59,9 @@ public partial class _Default : System.Web.UI.Page
     {
 
     }
+
+// classe para os metodos do banco
+    
     public class Falecido
     {
         public int id_vitima { get; set; }
@@ -67,6 +70,35 @@ public partial class _Default : System.Web.UI.Page
         public DateTime data_obito { get; set; }
         public string local_obito { get; set; }
     }
+
+// metodo para adicionar ao banco
+
+    private void AdicionarFalecido(Falecido falecido)
+    {
+
+        string conexaoString = System.Configuration.ConfigurationManager.ConnectionStrings["MinhaConexao"].ConnectionString;
+
+        string inserir = "INSERT INTO Vitima (nome_vitima, data_nasc, data_obito, local_obito) VALUES (@Nome, @DataNascimento, @DataFalecimento, @LocalObito)";
+
+        using (SqlConnection conexao = new SqlConnection(conexaoString))
+        {
+            using (SqlCommand comando = new SqlCommand(inserir, conexao))
+            {
+
+                comando.Parameters.AddWithValue("@Nome", falecido.nome_vitima);
+                comando.Parameters.AddWithValue("@DataNascimento", falecido.data_nasc.ToString("yyyy/MM/dd"));
+                comando.Parameters.AddWithValue("@DataFalecimento", falecido.data_obito.ToString("yyyy/MM/dd"));
+                comando.Parameters.AddWithValue("LocalObito", falecido.local_obito);
+
+                conexao.Open();
+                comando.ExecuteNonQuery();
+            }
+        }
+    }
+
+}
+
+// metodo para exibir o banco
 
     private List<Falecido> GetFalecidos()
     {
@@ -99,28 +131,3 @@ public partial class _Default : System.Web.UI.Page
         }
         return falecidos;
     }
-
-    private void AdicionarFalecido(Falecido falecido)
-    {
-
-        string conexaoString = System.Configuration.ConfigurationManager.ConnectionStrings["MinhaConexao"].ConnectionString;
-
-        string inserir = "INSERT INTO Vitima (nome_vitima, data_nasc, data_obito, local_obito) VALUES (@Nome, @DataNascimento, @DataFalecimento, @LocalObito)";
-
-        using (SqlConnection conexao = new SqlConnection(conexaoString))
-        {
-            using (SqlCommand comando = new SqlCommand(inserir, conexao))
-            {
-
-                comando.Parameters.AddWithValue("@Nome", falecido.nome_vitima);
-                comando.Parameters.AddWithValue("@DataNascimento", falecido.data_nasc.ToString("yyyy/MM/dd"));
-                comando.Parameters.AddWithValue("@DataFalecimento", falecido.data_obito.ToString("yyyy/MM/dd"));
-                comando.Parameters.AddWithValue("LocalObito", falecido.local_obito);
-
-                conexao.Open();
-                comando.ExecuteNonQuery();
-            }
-        }
-    }
-
-}
